@@ -2,30 +2,126 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-  <meta name="theme-color" content="#090a0d">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#090b10">
   <title>AUTO NUMBER BOT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Russo+One&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <div class="brand"><div class="brand-mark">AN<span>B</span></div><div><b>AUTO NUMBER</b><small>COLLECTOR CLUB</small></div></div>
-      <button class="wallet" id="wallet"><small>БАЛАНС</small><b><span id="balance">12 500</span> ₽</b></button>
+      <div class="brand"><span class="brand-mark">AN</span><div><b>AUTO NUMBER</b><small>COLLECTOR CLUB</small></div></div>
+      <div class="wallet"><span class="coin">₽</span><b id="balance">2 500</b></div>
     </header>
 
-    <main id="screen" class="screen"></main>
+    <main>
+      <section id="screen-home" class="screen active">
+        <div class="welcome-row">
+          <div><div class="eyebrow">СЕЗОН 01 · УЛИЧНАЯ КОЛЛЕКЦИЯ</div><h1>Крути свой<br><em>номер</em></h1></div>
+          <div class="level-chip"><span>LVL</span><b id="level">1</b></div>
+        </div>
+        <div class="stats-strip">
+          <div><span>ЭНЕРГИЯ</span><b id="energy">10 / 10</b><div class="energy-bar"><i id="energy-fill"></i></div></div>
+          <div class="stat-divider"></div>
+          <div><span>ОПЫТ</span><b id="xp">0 / 100 XP</b></div>
+          <div class="stat-divider"></div>
+          <div><span>НОМЕРА</span><b id="plate-count">0</b></div>
+        </div>
+        <div class="country-panel">
+          <div class="section-kicker">ВЫБЕРИ СТРАНУ</div>
+          <div class="country-options">
+            <button class="country selected" data-country="BY"><span>🇧🇾</span><b>Беларусь</b><i>BY</i></button>
+            <button class="country" data-country="RU"><span>🇷🇺</span><b>Россия</b><i>RU</i></button>
+            <button class="country" data-country="UA"><span>🇺🇦</span><b>Украина</b><i>UA</i></button>
+          </div>
+        </div>
+        <div class="spin-stage">
+          <div class="stage-top"><span>ТВОЙ СЛЕДУЮЩИЙ НОМЕР</span><span class="live-dot">● LIVE DROP</span></div>
+          <div class="plate-wrap" id="spin-plate">
+            <div class="plate-frame" id="plate-frame">
+              <div class="plate-side" id="plate-side"><b>BY</b><span>🇧🇾</span></div>
+              <div class="plate-main"><div class="plate-number" id="plate-number">АА 0000-7</div><div class="plate-caption" id="plate-caption">РЕСПУБЛИКА БЕЛАРУСЬ</div></div>
+            </div>
+          </div>
+          <div class="drop-info"><span class="rarity-pill common" id="rarity">ОБЫЧНЫЙ</span><span id="drop-country-label">БЕЛАРУСЬ</span></div>
+          <div class="spin-controls">
+            <button class="spin-button" id="spin-btn"><span>КРУТИТЬ НОМЕР</span><b>−100 ₽</b></button>
+            <p>Случайный номер · шанс редкости зависит от категории</p>
+          </div>
+        </div>
+        <div class="section-heading"><div><span class="section-kicker">КОЛЛЕКЦИЯ</span><h2>Твоя охота</h2></div><button class="text-button" data-go="garage">В гараж ↗</button></div>
+        <div class="mini-cards">
+          <div class="mini-card"><span class="mini-icon">✦</span><b id="best-number">Пока пусто</b><small>ЛУЧШИЙ НОМЕР</small></div>
+          <div class="mini-card"><span class="mini-icon">▣</span><b id="garage-value">0 ₽</b><small>ОЦЕНКА ГАРАЖА</small></div>
+        </div>
+        <div class="event-banner"><div><span>СЕЗОННОЕ СОБЫТИЕ</span><b>Охота за редкостью</b><small>Собирай номера и выполняй задания</small></div><div class="event-symbol">✧</div></div>
+      </section>
+
+      <section id="screen-garage" class="screen">
+        <div class="page-heading"><div class="eyebrow">ТВОЯ КОЛЛЕКЦИЯ</div><h1>Гараж<span class="accent">.</span></h1><p>Все найденные номера в одном месте.</p></div>
+        <div class="garage-summary"><div><small>НОМЕРОВ СОБРАНО</small><b id="garage-total">0</b></div><div><small>ОБЩАЯ ОЦЕНКА</small><b id="garage-total-value">0 ₽</b></div></div>
+        <div class="filter-row"><button class="filter active" data-filter="all">Все</button><button class="filter" data-filter="legendary">Легендарные</button><button class="filter" data-filter="epic">Эпические</button><button class="filter" data-filter="rare">Редкие</button></div>
+        <div id="garage-list" class="garage-list"><div class="empty-state"><span>▣</span><b>Гараж пока пуст</b><p>Сделай первую прокрутку, чтобы найти номер.</p><button class="primary-small" data-go="home">Крутить номер</button></div></div>
+      </section>
+
+      <section id="screen-frames" class="screen">
+        <div class="page-heading"><div class="eyebrow">ПЕРСОНАЛИЗАЦИЯ</div><h1>Магазин рамок<span class="accent">.</span></h1><p>Выбирай оформление. Рамки не дают игровых бонусов.</p></div>
+        <div class="frame-preview-card">
+          <div class="preview-label">ПРЕДПРОСМОТР</div>
+          <div class="plate-frame preview-plate" id="frame-preview">
+            <div class="plate-side"><b>BY</b><span>🇧🇾</span></div><div class="plate-main"><div class="plate-number">АА 0000-7</div><div class="plate-caption">РЕСПУБЛИКА БЕЛАРУСЬ</div></div>
+          </div>
+          <div class="preview-current" id="current-frame-label">Стандартная рамка</div>
+        </div>
+        <div class="shop-head"><h2>Каталог рамок</h2><span>КОСМЕТИКА</span></div>
+        <div class="frame-grid" id="frame-grid"></div>
+      </section>
+
+      <section id="screen-tasks" class="screen">
+        <div class="page-heading"><div class="eyebrow">АКТИВНОСТЬ</div><h1>Задания<span class="accent">.</span></h1><p>Выполняй задания и забирай игровые рубли.</p></div>
+        <div class="task-card"><div class="task-icon">↻</div><div class="task-copy"><b>Первая прокрутка</b><small>Сделай одну прокрутку номера</small><div class="task-progress"><i id="task-spin-progress"></i></div></div><strong>+150 ₽</strong><button id="claim-spin-task" class="claim-btn">Забрать</button></div>
+        <div class="task-card"><div class="task-icon">▣</div><div class="task-copy"><b>Начинающий коллекционер</b><small>Собери 3 номерных знака</small><div class="task-progress"><i id="task-collect-progress"></i></div></div><strong>+300 ₽</strong><button id="claim-collect-task" class="claim-btn">Забрать</button></div>
+        <div class="task-card"><div class="task-icon">✧</div><div class="task-copy"><b>Свой стиль</b><small>Установи любую рамку</small><div class="task-progress"><i id="task-frame-progress"></i></div></div><strong>+100 ₽</strong><button id="claim-frame-task" class="claim-btn">Забрать</button></div>
+        <div class="season-card"><span>СЕЗОН 01</span><h2>Уличная коллекция</h2><p>Собирай коллекцию, открывай достижения и повышай уровень.</p><div class="season-progress"><i id="season-progress"></i></div><small id="season-xp">0 / 500 XP</small></div>
+      </section>
+
+      <section id="screen-rating" class="screen">
+        <div class="page-heading"><div class="eyebrow">СОРЕВНОВАНИЕ</div><h1>Рейтинг<span class="accent">.</span></h1><p>Твой результат среди коллекционеров.</p></div>
+        <div class="rating-tabs"><button class="active">Сезон</button><button>Неделя</button><button>Друзья</button></div>
+        <div class="podium"><div class="podium-user second"><span>🥈</span><b>Driver_02</b><small>8 450 XP</small><i>2</i></div><div class="podium-user first"><span>🥇</span><b>NumberKing</b><small>12 800 XP</small><i>1</i></div><div class="podium-user third"><span>🥉</span><b>BelAuto</b><small>7 920 XP</small><i>3</i></div></div>
+        <div class="ranking-list"><div><span>04</span><b>NightRider</b><small>6 840 XP</small></div><div><span>05</span><b>TurboBY</b><small>5 910 XP</small></div><div class="you-rank"><span>—</span><b>Ты</b><small id="my-rating-xp">0 XP</small></div></div>
+        <p class="demo-note">Демонстрационный рейтинг. Онлайн-таблица появится после подключения сервера.</p>
+      </section>
+
+      <section id="screen-friends" class="screen">
+        <div class="page-heading"><div class="eyebrow">ИГРАЙ ВМЕСТЕ</div><h1>Друзья<span class="accent">.</span></h1><p>Приглашай друзей и собирайте коллекции.</p></div>
+        <div class="invite-card"><div class="invite-art">↗</div><span>ТВОЯ РЕФЕРАЛЬНАЯ ССЫЛКА</span><b id="invite-link">t.me/neoautonumb_bot</b><button id="copy-invite" class="primary-small">Скопировать ссылку</button><small>Демо: награды за приглашения пока не начисляются.</small></div>
+        <div class="friends-stats"><div><b>0</b><small>ДРУЗЕЙ</small></div><div><b>0 ₽</b><small>БОНУСЫ</small></div><div><b>0</b><small>КЛАН</small></div></div>
+        <div class="clan-card"><span>⌂</span><div><b>Кланы скоро появятся</b><small>Объединяйтесь и соревнуйтесь командами.</small></div></div>
+      </section>
+
+      <section id="screen-profile" class="screen">
+        <div class="page-heading"><div class="eyebrow">ТВОЙ АККАУНТ</div><h1>Профиль<span class="accent">.</span></h1></div>
+        <div class="profile-card"><div class="avatar">AN</div><div><b id="profile-name">Коллекционер</b><small id="profile-level">УРОВЕНЬ 1</small></div><span class="profile-badge">NEW</span></div>
+        <div class="profile-stats"><div><small>НОМЕРА</small><b id="profile-plates">0</b></div><div><small>ОПЫТ</small><b id="profile-xp">0</b></div><div><small>ПОПЫТКИ</small><b id="profile-spins">0</b></div></div>
+        <div class="settings-list"><div><span>Валюта</span><b>Игровые рубли ₽</b></div><div><span>Сохранение</span><b>На этом устройстве</b></div><div><span>Версия</span><b>Prototype 1.0</b></div></div>
+        <button id="reset-demo" class="reset-button">Сбросить демо-прогресс</button>
+      </section>
+    </main>
 
     <nav class="bottom-nav">
-      <button data-tab="home" class="active"><i>⌂</i><span>Главная</span></button>
-      <button data-tab="garage"><i>▤</i><span>Гараж</span></button>
-      <button data-tab="rating"><i>♛</i><span>Рейтинг</span></button>
-      <button data-tab="tasks"><i>✓</i><span>Задания</span></button>
-      <button data-tab="friends"><i>♧</i><span>Друзья</span></button>
+      <button class="nav-item active" data-screen="home"><span>⌂</span><small>Главная</small></button>
+      <button class="nav-item" data-screen="garage"><span>▣</span><small>Гараж</small></button>
+      <button class="nav-item" data-screen="frames"><span>▤</span><small>Рамки</small></button>
+      <button class="nav-item" data-screen="tasks"><span>☷</span><small>Задания</small></button>
+      <button class="nav-item" data-screen="rating"><span>♛</span><small>Рейтинг</small></button>
+      <button class="nav-item" data-screen="profile"><span>◉</span><small>Профиль</small></button>
     </nav>
+    <div id="toast" class="toast"></div>
   </div>
-  <div id="toast" class="toast"></div>
   <script src="app.js"></script>
 </body>
 </html>
