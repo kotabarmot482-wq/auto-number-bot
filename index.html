@@ -1,91 +1,30 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-  <meta name="theme-color" content="#090a0e">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101116">
   <title>AUTO NUMBER BOT</title>
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-<div class="app-shell">
-  <header class="topbar">
-    <div class="brand"><span class="brand-mark">AN</span><div><b>AUTO NUMBER</b><small>COLLECTOR CLUB</small></div></div>
-    <div class="balance"><span>₽</span><b id="balance">2 500</b></div>
-  </header>
-
-  <main>
-    <section class="screen active" id="screen-home">
-      <div class="season-row"><span>◷ СЕЗОН 1</span><span class="muted">Коллекционируй редкости</span></div>
-      <div class="hero">
-        <div class="eyebrow">ГЛАВНАЯ ПРОКРУТКА</div>
-        <h1>Испытай<br><em>удачу</em></h1>
-        <p>Собирай автомобильные номера трёх стран и пополняй коллекцию.</p>
-      </div>
-      <div class="panel">
-        <div class="panel-head"><b>Выбери страну</b><span class="muted">Формат номера</span></div>
-        <div class="country-grid">
-          <button class="country selected" data-country="BY"><span>🇧🇾</span><b>Беларусь</b><small>BY</small></button>
-          <button class="country" data-country="RU"><span>🇷🇺</span><b>Россия</b><small>RU</small></button>
-          <button class="country" data-country="UA"><span>🇺🇦</span><b>Украина</b><small>UA</small></button>
-        </div>
-        <div class="panel-head price-head"><b>Тип прокрутки</b><span class="muted">Чем выше цена — тем лучше шансы</span></div>
-        <div class="roll-options">
-          <button class="roll-option selected" data-cost="100"><b>Обычная</b><strong>100 ₽</strong></button>
-          <button class="roll-option" data-cost="500"><b>Серебряная</b><strong>500 ₽</strong></button>
-          <button class="roll-option" data-cost="1500"><b>Золотая</b><strong>1 500 ₽</strong></button>
-          <button class="roll-option" data-cost="5000"><b>Элитная</b><strong>5 000 ₽</strong></button>
-        </div>
-        <button class="primary-btn" id="spinBtn">ПРОКРУТИТЬ · 100 ₽ <span>↗</span></button>
-      </div>
-      <div class="result-card hidden" id="resultCard">
-        <div class="result-rarity" id="resultRarity">ЛЕГЕНДАРНЫЙ</div>
-        <div class="plate" id="plate"><div class="plate-country" id="plateFlag">🇧🇾<small>BY</small></div><b id="plateText">0000 АА-1</b></div>
-        <div class="result-value" id="resultValue">50 000 ₽</div>
-        <div class="result-note">Ориентировочная коллекционная ценность</div>
-        <button class="secondary-btn" id="shareBtn">Поделиться результатом ↗</button>
-      </div>
-      <div class="section-title">Редкость номеров</div>
-      <div class="rarity-list">
-        <span class="r-common">Обычный</span><span class="r-uncommon">Необычный</span><span class="r-rare">Редкий</span><span class="r-epic">Эпический</span><span class="r-mythic">Мифический</span><span class="r-legendary">Легендарный</span>
-      </div>
-    </section>
-
-    <section class="screen" id="screen-garage">
-      <div class="page-title"><div class="eyebrow">ТВОЯ КОЛЛЕКЦИЯ</div><h2>Гараж</h2><p>Все номера, которые тебе удалось получить.</p></div>
-      <div id="garageList" class="garage-list"><div class="empty-state">Пока пусто. Сделай первую прокрутку!</div></div>
-    </section>
-
-    <section class="screen" id="screen-wheel">
-      <div class="page-title"><div class="eyebrow">ЕЖЕДНЕВНЫЙ БОНУС</div><h2>Колесо удачи</h2><p>Одно бесплатное вращение каждые 24 часа.</p></div>
-      <div class="wheel-wrap"><div class="wheel-pointer">▼</div><div class="wheel" id="wheel"><div class="wheel-center">ANB</div><span>100 ₽</span><span>500 ₽</span><span>РАМКА</span><span>1 000 ₽</span><span>2 500 ₽</span><span>5 000 ₽</span></div></div>
-      <div class="wheel-status" id="wheelStatus">Бесплатное вращение доступно!</div>
-      <button class="primary-btn" id="wheelBtn">КРУТИТЬ КОЛЕСО <span>↗</span></button>
-      <p class="fine-print">Призы виртуальные и не имеют денежной стоимости.</p>
-    </section>
-
-    <section class="screen" id="screen-frames">
-      <div class="page-title"><div class="eyebrow">КАСТОМИЗАЦИЯ</div><h2>Рамки аватара</h2><p>Рамки — отдельные предметы, не связанные с номерами.</p></div>
-      <div class="avatar-preview"><div class="avatar-ring" id="avatarRing">🚘</div><b>Твой профиль</b><small>Рамка отображается в профиле и рейтинге</small></div>
-      <div class="frame-grid" id="frameGrid"></div>
-    </section>
-
-    <section class="screen" id="screen-profile">
-      <div class="page-title"><div class="eyebrow">АККАУНТ</div><h2>Профиль</h2><p id="playerName">Игрок AUTO NUMBER</p></div>
-      <div class="profile-stats"><div><small>БАЛАНС</small><b id="profileBalance">2 500 ₽</b></div><div><small>НОМЕРОВ</small><b id="numberCount">0</b></div><div><small>СЕЗОН</small><b>1</b></div></div>
-      <div class="panel"><b>Правила игры</b><ul class="rules"><li>Баланс — виртуальные игровые рубли.</li><li>Прокрутка списывает выбранную игровую цену.</li><li>Редкость определяется случайно по шансам выбранного типа.</li><li>Колесо удачи доступно раз в 24 часа.</li><li>Номера и призы нельзя обменять на реальные деньги.</li></ul></div>
-      <div class="panel"><b>О проекте</b><p class="muted">AUTO NUMBER BOT · коллекционная игра</p></div>
-    </section>
-  </main>
-
-  <nav class="bottom-nav">
-    <button class="nav-item active" data-screen="home"><span>⌂</span><small>Главная</small></button>
-    <button class="nav-item" data-screen="garage"><span>▤</span><small>Гараж</small></button>
-    <button class="nav-item" data-screen="wheel"><span>◉</span><small>Удача</small></button>
-    <button class="nav-item" data-screen="frames"><span>◎</span><small>Рамки</small></button>
-    <button class="nav-item" data-screen="profile"><span>♙</span><small>Профиль</small></button>
-  </nav>
-</div>
-<div class="toast" id="toast"></div>
-<script src="/app.js"></script>
-</body></html>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-mark">AN</div>
+      <div class="brand-copy"><b>AUTO NUMBER</b><span>COLLECTOR CLUB</span></div>
+      <div class="balance-pill"><span>₽</span><b id="balance">1 000</b></div>
+    </header>
+    <main id="screen" class="screen"></main>
+    <nav class="nav">
+      <button class="nav-btn active" data-tab="home"><span>🎰</span>Крутить</button>
+      <button class="nav-btn" data-tab="garage"><span>🚘</span>Гараж</button>
+      <button class="nav-btn" data-tab="wheel"><span>🎡</span>Колесо</button>
+      <button class="nav-btn" data-tab="frames"><span>🖼️</span>Рамки</button>
+      <button class="nav-btn" data-tab="profile"><span>👤</span>Профиль</button>
+    </nav>
+  </div>
+  <div id="toast" class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
