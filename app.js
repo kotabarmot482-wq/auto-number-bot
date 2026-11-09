@@ -1,82 +1,22 @@
-const tg = window.Telegram?.WebApp;
-tg?.ready();
-tg?.expand();
-
-const state = {
-  country: "by",
-  balance: 1000,
-  numbers: [],
-  items: [],
-  tasks: JSON.parse(localStorage.getItem("anb_tasks") || "{}"),
-  generatedToday: 0
+const $=s=>document.querySelector(s);
+const state={tab:'home',country:'RU',balance:12500,energy:66,level:1,collection:[],last:null,taskDone:[],claimed:false,sort:'value'};
+const countries={
+ RU:{name:'Россия',flag:'🇷🇺',code:'RUS',format:()=>{const letters='АВЕКМНОРСТУХ';const a=()=>letters[Math.floor(Math.random()*letters.length)];const n=()=>Math.floor(Math.random()*10);const region=['77','97','99','50','90','116','174','196','777'][Math.floor(Math.random()*9)];return {main:`${a()} ${n()}${n()}${n()} ${a()}${a()}`,region,side:'RUS',kind:'ru'};}},
+ BY:{name:'Беларусь',flag:'🇧🇾',code:'BY',format:()=>{const letters='АВЕКМНОРСТУХ';const a=()=>letters[Math.floor(Math.random()*letters.length)];const n=()=>Math.floor(Math.random()*10);return {main:`${n()}${n()}${n()}${n()} ${a()}${a()}-${1+Math.floor(Math.random()*7)}`,region:'',side:'BY',kind:'by'};}},
+ UA:{name:'Украина',flag:'🇺🇦',code:'UA',format:()=>{const letters='АВЕКМНОРСТУХ';const a=()=>letters[Math.floor(Math.random()*letters.length)];const n=()=>Math.floor(Math.random()*10);return {main:`${a()}${a()} ${n()}${n()}${n()}${n()} ${a()}${a()}`,region:'',side:'UA',kind:'ua'};}}
 };
-
-const countries = {
-  by: {name:"БЕЛАРУСЬ",flag:"🇧🇾",code:"BY",regions:["МИНСК · РЕГИОН 7","МИНСКАЯ ОБЛАСТЬ · 5","БРЕСТСКАЯ ОБЛАСТЬ · 1"],make:()=>`${rand(1000,9999)} ${letters(2)}-${[1,2,3,4,5,6,7,8,9][rand(0,8)]}`},
-  ru: {name:"РОССИЯ",flag:"🇷🇺",code:"RUS",regions:["МОСКВА · 77","САНКТ-ПЕТЕРБУРГ · 78","ТАТАРСТАН · 16"],make:()=>`${rand(100,999)} ${ruLetters(3)} ${[77,78,16,50,52,54,63,66, КраснодарCode()][rand(0,8)]}`},
-  ua: {name:"УКРАИНА",flag:"🇺🇦",code:"UA",regions:["КИЕВ · AA","ЛЬВОВ · BC","ОДЕССА · BH"],make:()=>`${uaLetters(2)} ${rand(1000,9999)} ${uaLetters(2)}`}
-};
-function КраснодарCode(){return 23}
-function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
-function letters(n){const s="ABCEHIKMOPTX";return Array.from({length:n},()=>s[rand(0,s.length-1)]).join("")}
-function ruLetters(n){const s="АВЕКМНОРСТУХ";return Array.from({length:n},()=>s[rand(0,s.length-1)]).join("")}
-function uaLetters(n){const s="АВСЕНІКМОРТХ";return Array.from({length:n},()=>s[rand(0,s.length-1)]).join("")}
-function rarityFor(value){const x=value.replace(/\D/g,"");if(/(.)\1{3}/.test(x)||/(\d)\1{2}/.test(x))return "РЕДКИЙ";if(x.includes("777")||x.includes("000"))return "ОСОБЫЙ";return "ОБЫЧНЫЙ"}
-function toast(message){const el=document.getElementById("toast");el.textContent=message;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2100)}
-function renderBalance(){document.getElementById("balance").innerHTML=`${state.balance.toLocaleString("ru-RU")} <i>ANB</i>`;document.getElementById("stat-balance").textContent=state.balance.toLocaleString("ru-RU")}
-function renderCollection(){
-  const list=document.getElementById("collection-list");list.innerHTML="";
-  document.getElementById("collection-count").textContent=state.numbers.length;
-  document.getElementById("stat-numbers").textContent=state.numbers.length;
-  document.getElementById("collection-empty").style.display=state.numbers.length?"none":"block";
-  [...state.numbers].reverse().forEach(n=>{const row=document.createElement("div");row.className="collection-item";row.innerHTML=`<div class="mini-plate">${escapeHtml(n.value)}</div><div class="collection-meta">${n.country} · ${n.rarity}</div>`;list.appendChild(row)});
-}
-function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function generate(){
-  const c=countries[state.country], value=c.make(), rarity=rarityFor(value);
-  document.getElementById("plate-number").textContent=value;
-  document.getElementById("plate-country").textContent=`${c.flag} ${c.name}`;
-  document.getElementById("plate-flag").textContent=c.code;
-  document.getElementById("region").textContent=c.regions[rand(0,c.regions.length-1)];
-  document.getElementById("rarity").textContent=rarity;
-  state.numbers.push({value,country:c.name,rarity});
-  state.generatedToday++;
-  renderCollection();
-  document.getElementById("task-spin").textContent="Готово";
-  toast("Номер добавлен в коллекцию");
-}
-document.querySelectorAll(".country").forEach(btn=>btn.addEventListener("click",()=>{
-  document.querySelectorAll(".country").forEach(x=>x.classList.remove("selected"));
-  btn.classList.add("selected");state.country=btn.dataset.country;
-  const c=countries[state.country];document.getElementById("plate-country").textContent=`${c.flag} ${c.name}`;document.getElementById("plate-flag").textContent=c.code;
-}));
-document.getElementById("spin-btn").addEventListener("click",generate);
-document.querySelectorAll(".nav-btn").forEach(btn=>btn.addEventListener("click",()=>{
-  document.querySelectorAll(".nav-btn").forEach(x=>x.classList.remove("active"));btn.classList.add("active");
-  document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
-  document.getElementById(`page-${btn.dataset.page}`).classList.add("active");
-}));
-document.getElementById("task-spin").addEventListener("click",()=>{
-  if(!state.generatedToday)return toast("Сначала сгенерируй номер");
-  if(state.tasks.spin)return toast("Задание уже выполнено");
-  state.tasks.spin=true;state.balance+=100;localStorage.setItem("anb_tasks",JSON.stringify(state.tasks));renderBalance();
-  document.getElementById("task-spin").textContent="Получено";document.getElementById("task-spin").disabled=true;toast("+100 ANB");
-});
-document.getElementById("task-collect").addEventListener("click",()=>{
-  if(state.numbers.length<3)return toast("Нужно собрать 3 номера");
-  if(state.tasks.collect)return toast("Задание уже выполнено");
-  state.tasks.collect=true;state.balance+=150;localStorage.setItem("anb_tasks",JSON.stringify(state.tasks));renderBalance();
-  document.getElementById("task-collect").textContent="Получено";document.getElementById("task-collect").disabled=true;toast("+150 ANB");
-});
-document.querySelectorAll(".buy-btn").forEach(btn=>btn.addEventListener("click",()=>{
-  const id=btn.dataset.item,price=Number(btn.dataset.price);
-  if(state.items.includes(id))return toast("Уже приобретено");
-  if(state.balance<price)return toast("Недостаточно ANB");
-  state.balance-=price;state.items.push(id);btn.textContent="Куплено";btn.disabled=true;
-  document.getElementById("stat-items").textContent=state.items.length;renderBalance();toast("Предмет добавлен в профиль");
-}));
-const user=tg?.initDataUnsafe?.user;
-if(user){document.getElementById("profile-name").textContent=[user.first_name,user.last_name].filter(Boolean).join(" ")||"Игрок";document.getElementById("profile-id").textContent=`Telegram ID: ${user.id}`;document.getElementById("avatar").textContent=(user.first_name||"A").slice(0,2).toUpperCase()}
-if(state.tasks.spin){document.getElementById("task-spin").textContent="Получено";document.getElementById("task-spin").disabled=true}
-if(state.tasks.collect){document.getElementById("task-collect").textContent="Получено";document.getElementById("task-collect").disabled=true}
-renderBalance();renderCollection();
+const rarity=[['Обычный',1],['Редкий',2.5],['Эпический',6],['Легендарный',15],['Мифический',40]];
+function plateData(){const c=countries[state.country],p=c.format(),r=Math.random();let ri=r>.997?4:r>.97?3:r>.82?2:r>.55?1:0;let base=[500,1800,6500,24000,90000][ri];let value=Math.round(base*(.7+Math.random()*.8));return {...p,country:state.country,flag:c.flag,name:c.name,rarity:rarity[ri][0],value};}
+function fmt(n){return Math.round(n).toLocaleString('ru-RU').replace(/\u00a0/g,' ')}
+function plateHTML(p,mini=false){if(!p)return '';return `<div class="${mini?'mini-plate':'plate '+p.kind}">${mini?`${p.main} ${p.region||''}`:`<div class="plate-side"><span class="mini-flag">${p.flag}</span><b>${p.side}</b></div><div class="plate-main">${p.main}</div>${p.region?`<div class="plate-region">${p.region}<small>RUS ${p.flag}</small></div>`:''}`}</div>`}
+function render(){ $('#balance').textContent=fmt(state.balance);document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===state.tab));const s=$('#screen');s.innerHTML=({home,garage,rating,tasks,friends})[state.tab]();bind();}
+function home(){const p=state.last;return `<div class="hero"><div class="eyebrow">ВИРТУАЛЬНЫЙ АВТОМОБИЛЬНЫЙ МИР</div><h1>ТВОЙ НОМЕР.<br><span class="gold">ТВОЯ КОЛЛЕКЦИЯ.</span></h1><p>Собирай редкие регистрационные комбинации из разных стран и развивай свой гараж.</p></div><div class="section-head"><h2>Выбери страну</h2><span class="online">● ONLINE</span></div><div class="country-grid">${Object.entries(countries).map(([k,c])=>`<button class="country ${state.country===k?'selected':''}" data-country="${k}"><span class="flag">${c.flag}</span><b>${c.name}</b><small>${c.code}</small></button>`).join('')}</div><div class="plate-card"><div class="plate-meta"><span>${countries[state.country].flag} ${countries[state.country].name.toUpperCase()}</span><span>${p?p.rarity.toUpperCase():'ГОТОВ К ПРОКРУТКЕ'}</span></div>${p?plateHTML(p):`<div class="plate ru"><div class="plate-side"><span class="mini-flag">🇷🇺</span><b>RUS</b></div><div class="plate-main">А 777 АА</div><div class="plate-region">77<small>RUS 🇷🇺</small></div></div>`}<div class="result-price">${p?fmt(p.value)+' ₽':'— ₽'}</div><div class="result-note">${p?`Выпал номер редкости «${p.rarity}» · ${p.name}`:'Нажми «Крутить», чтобы получить новый номер'}</div><div class="actions"><button class="btn" id="store" ${!p?'disabled':''}>В гараж</button><button class="btn primary" id="spin" ${state.energy<=0?'disabled':''}>Крутить · 500 ₽</button></div><div class="actions"><button class="subtle-btn" id="sell" style="width:100%" ${!p?'disabled':''}>Продать выпавший номер</button></div></div><div class="stats"><div class="stat"><b>${state.level}</b><small>УРОВЕНЬ</small></div><div class="stat"><b>⚡ ${state.energy}</b><small>ЭНЕРГИЯ</small></div><div class="stat"><b>${state.collection.length}</b><small>В ГАРАЖЕ</small></div></div><div class="card"><h3>Сезон коллекционеров</h3><p>Собирай номера, выполняй задания и поднимайся в рейтинге игроков.</p><div class="progress"><span style="width:${Math.min(100,state.collection.length*8)}%"></span></div></div>`}
+function garage(){let arr=[...state.collection];if(state.sort==='value')arr.sort((a,b)=>b.value-a.value);return `<div class="section-head"><h2>Гараж</h2><span class="price">${fmt(arr.reduce((a,p)=>a+p.value,0))} ₽</span></div><div class="card"><div class="eyebrow">СТОИМОСТЬ ГАРАЖА</div><h1 style="font-size:34px;margin:9px 0">${fmt(arr.reduce((a,p)=>a+p.value,0))} ₽</h1><p>${arr.length} из 24 мест · номера хранятся в этой демоверсии на устройстве</p></div><input class="search" id="search" placeholder="⌕  Найти номер"><div class="section-head"><h2>Номера</h2><button class="subtle-btn" id="sort">Сначала дорогие</button></div><div id="garage-list">${arr.length?arr.map((p,i)=>`<div class="card list-row" data-search="${(p.main+p.name).toLowerCase()}">${plateHTML(p,true)}<div class="grow"><b class="price">${fmt(p.value)} ₽</b><small>${p.rarity} · ${p.flag} ${p.name}</small></div><button class="subtle-btn" data-sell="${i}">⋯</button></div>`).join(''):`<div class="empty">Гараж пока пуст.<br>Получи первый номер на главной странице.</div>`}</div>`}
+function rating(){return `<div class="section-head"><h2>Рейтинг</h2><span class="badge">СЕЗОН 1</span></div><div class="tabs"><button class="active">Сезон</button><button>Неделя</button><button>Друзья</button></div><p class="muted" style="text-align:center;font-size:12px">Демо-рейтинг. После подключения сервера появится общий рейтинг игроков.</p><div class="podium"><div class="person"><div class="avatar">S</div><strong>StreetKing</strong><small>№ 2 · 8 420 000 ₽</small></div><div class="person first"><div class="avatar">♛</div><strong>NumberBoss</strong><small>№ 1 · 12 800 000 ₽</small></div><div class="person"><div class="avatar">M</div><strong>Motorist</strong><small>№ 3 · 6 950 000 ₽</small></div></div><div class="card"><div class="list-row"><div class="grow"><b>Твоё место</b><small>Локальный профиль</small></div><b class="price">#${state.collection.length ? 4 : '—'}</b></div><div class="list-row"><div class="grow"><b>Стоимость гаража</b><small>${state.collection.length} номеров</small></div><b>${fmt(state.collection.reduce((a,p)=>a+p.value,0))} ₽</b></div></div>`}
+function tasks(){let ts=[['Первая коллекция','Получи первый номер',500],['Коллекционер','Собери 3 номера',1200],['Разнообразие','Получи номера двух стран',1800],['Активный игрок','Сделай 5 прокруток',2500]];return `<div class="section-head"><h2>Задания</h2><span class="badge">ЕЖЕДНЕВНЫЕ</span></div><div class="card"><h3>Награды за активность</h3><p>Выполняй игровые задания и получай рубли на новые прокрутки.</p></div>${ts.map((t,i)=>`<div class="card list-row"><div class="grow"><b>${t[0]}</b><small>${t[1]}</small></div><div style="text-align:right"><b class="price">+${fmt(t[2])} ₽</b><br><button class="subtle-btn" data-task="${i}" ${state.taskDone.includes(i)?'disabled':''}>${state.taskDone.includes(i)?'Получено':'Забрать'}</button></div></div>`).join('')}`}
+function friends(){return `<div class="section-head"><h2>Друзья</h2><span class="badge">РЕФЕРАЛЬНАЯ СИСТЕМА</span></div><div class="hero"><div class="eyebrow">ПРИГЛАШАЙ ДРУЗЕЙ</div><h1>Играй вместе.<br><span class="gold">Получай бонусы.</span></h1><p>За приглашённого друга, который запустит игру, можно будет получить игровые рубли после подключения Telegram-сервера.</p><div class="actions"><button class="btn primary" id="invite">Пригласить друга</button><button class="btn" id="copy">Ссылка</button></div></div><div class="stats"><div class="stat"><b>0</b><small>ДРУЗЕЙ</small></div><div class="stat"><b>0 ₽</b><small>БОНУСЫ</small></div><div class="stat"><b>—</b><small>МЕСТО</small></div></div><div class="card"><h3>Как это работает</h3><p>1. Отправь другу свою ссылку.<br>2. Друг запускает AUTO NUMBER BOT.<br>3. После серверной проверки оба получаете игровой бонус.</p></div><div class="card"><h3>Твоя ссылка</h3><p id="ref-link">https://t.me/neoautonumb_bot</p></div>`}
+function bind(){document.querySelectorAll('[data-country]').forEach(b=>b.onclick=()=>{state.country=b.dataset.country;render()});$('#spin')?.addEventListener('click',()=>{if(state.balance<500||state.energy<1){toast('Недостаточно рублей или энергии');return}state.balance-=500;state.energy--;state.last=plateData();render()});$('#store')?.addEventListener('click',()=>{if(!state.last)return;if(state.collection.length>=24){toast('Гараж заполнен');return}state.collection.push(state.last);toast('Номер добавлен в гараж');state.last=null;render()});$('#sell')?.addEventListener('click',()=>{if(!state.last)return;state.balance+=state.last.value;toast('Продано за '+fmt(state.last.value)+' ₽');state.last=null;render()});document.querySelectorAll('[data-task]').forEach(b=>b.onclick=()=>{let i=+b.dataset.task;if(state.taskDone.includes(i))return;state.taskDone.push(i);state.balance+=[500,1200,1800,2500][i];render();toast('Награда начислена')});$('#sort')?.addEventListener('click',()=>{state.sort=state.sort==='value'?'new':'value';render()});$('#search')?.addEventListener('input',e=>document.querySelectorAll('[data-search]').forEach(x=>x.style.display=x.dataset.search.includes(e.target.value.toLowerCase())?'flex':'none'));document.querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>{const p=state.collection[+b.dataset.sell];state.balance+=p.value;state.collection.splice(+b.dataset.sell,1);render();toast('Номер продан за '+fmt(p.value)+' ₽')});$('#invite')?.addEventListener('click',()=>toast('Реферальная ссылка появится после подключения сервера'));$('#copy')?.addEventListener('click',()=>{navigator.clipboard?.writeText('https://t.me/neoautonumb_bot').then(()=>toast('Ссылка скопирована')).catch(()=>toast('Ссылка: https://t.me/neoautonumb_bot'))})}
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2200)}
+document.querySelectorAll('.bottom-nav button').forEach(b=>b.onclick=()=>{state.tab=b.dataset.tab;render()});
+if(window.Telegram?.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand()}
+render();

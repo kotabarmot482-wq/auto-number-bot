@@ -1,90 +1,31 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#10100f" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="theme-color" content="#090a0d">
   <title>AUTO NUMBER BOT</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <div class="brand-mark">AN<span>B</span></div>
-      <div class="brand-copy"><strong>AUTO NUMBER</strong><small>COLLECTOR CLUB</small></div>
-      <div class="balance"><small>БАЛАНС</small><strong id="balance">1 000 <i>ANB</i></strong></div>
+      <div class="brand"><div class="brand-mark">AN<span>B</span></div><div><b>AUTO NUMBER</b><small>COLLECTOR CLUB</small></div></div>
+      <button class="wallet" id="wallet"><small>БАЛАНС</small><b><span id="balance">12 500</span> ₽</b></button>
     </header>
 
-    <main>
-      <section class="page active" id="page-home">
-        <div class="hero">
-          <div class="eyebrow">ВИРТУАЛЬНЫЙ АВТОМОБИЛЬНЫЙ МИР</div>
-          <h1>ТВОЙ НОМЕР.<br><em>ТВОЯ КОЛЛЕКЦИЯ.</em></h1>
-          <p>Собирай интересные регистрационные комбинации из разных стран.</p>
-          <div class="hero-glow"></div>
-        </div>
-
-        <div class="section-heading"><div><small>ГЕНЕРАТОР</small><h2>Выбери страну</h2></div><span class="live-dot">● ONLINE</span></div>
-        <div class="country-grid">
-          <button class="country selected" data-country="by"><span>🇧🇾</span><b>Беларусь</b><small>BY</small></button>
-          <button class="country" data-country="ru"><span>🇷🇺</span><b>Россия</b><small>RU</small></button>
-          <button class="country" data-country="ua"><span>🇺🇦</span><b>Украина</b><small>UA</small></button>
-        </div>
-
-        <div class="plate-card">
-          <div class="plate-top"><span id="plate-country">🇧🇾 БЕЛАРУСЬ</span><span class="rarity" id="rarity">ОБЫЧНЫЙ</span></div>
-          <div class="plate" id="plate">
-            <div class="plate-flag" id="plate-flag">BY</div>
-            <strong id="plate-number">1234 AB-7</strong>
-          </div>
-          <div class="plate-bottom"><span id="region">МИНСК · РЕГИОН 7</span><span>ANB SIMULATOR</span></div>
-        </div>
-        <button class="primary-btn" id="spin-btn"><span>⟳</span> СГЕНЕРИРОВАТЬ НОМЕР</button>
-        <p class="fine-print">Это игровой симулятор. Комбинации не подтверждают регистрацию автомобиля и не предназначены для использования вместо настоящих номерных знаков.</p>
-      </section>
-
-      <section class="page" id="page-collection">
-        <div class="section-heading"><div><small>ТВОИ НАХОДКИ</small><h2>Коллекция</h2></div><span class="count" id="collection-count">0</span></div>
-        <div id="collection-list" class="collection-list"></div>
-        <div class="empty-state" id="collection-empty"><div>▤</div><b>Пока здесь пусто</b><p>Сгенерируй первый номер — он появится в коллекции.</p></div>
-      </section>
-
-      <section class="page" id="page-tasks">
-        <div class="section-heading"><div><small>ПОЛУЧАЙ НАГРАДЫ</small><h2>Ежедневные задания</h2></div></div>
-        <article class="task-card"><div class="task-icon">🎯</div><div class="task-info"><b>Первый запуск</b><p>Сгенерируй один номер</p><small>Награда: 100 ANB</small></div><button class="task-action" id="task-spin">Выполнить</button></article>
-        <article class="task-card"><div class="task-icon">🗂️</div><div class="task-info"><b>Коллекционер</b><p>Собери 3 номера</p><small>Награда: 150 ANB</small></div><button class="task-action" id="task-collect">Выполнить</button></article>
-        <p class="fine-print">Задания и награды пока работают в демонстрационном режиме на этом устройстве.</p>
-      </section>
-
-      <section class="page" id="page-shop">
-        <div class="section-heading"><div><small>ВИРТУАЛЬНЫЕ ПРЕДМЕТЫ</small><h2>Магазин</h2></div></div>
-        <div class="shop-card"><div class="shop-preview gold-preview">✦</div><div class="shop-info"><b>Золотая рамка</b><p>Оформление карточки номера</p><small>500 ANB</small></div><button class="buy-btn" data-item="gold" data-price="500">Купить</button></div>
-        <div class="shop-card"><div class="shop-preview neon-preview">✧</div><div class="shop-info"><b>Неоновая рамка</b><p>Яркое оформление коллекции</p><small>750 ANB</small></div><button class="buy-btn" data-item="neon" data-price="750">Купить</button></div>
-        <p class="fine-print">Магазин содержит только виртуальные декоративные предметы. Покупки за реальные деньги и вывод средств не предусмотрены.</p>
-      </section>
-
-      <section class="page" id="page-rating">
-        <div class="section-heading"><div><small>СООБЩЕСТВО</small><h2>Рейтинг</h2></div></div>
-        <div class="empty-state"><div>🏆</div><b>Рейтинг скоро появится</b><p>После подключения базы данных здесь появится общий рейтинг игроков.</p></div>
-      </section>
-
-      <section class="page" id="page-profile">
-        <div class="profile-card"><div class="avatar" id="avatar">AN</div><small>ПРОФИЛЬ ИГРОКА</small><h2 id="profile-name">Гость AUTO NUMBER</h2><p id="profile-id">Telegram Mini App</p></div>
-        <div class="stats-grid"><div><small>НОМЕРОВ</small><b id="stat-numbers">0</b></div><div><small>ANB</small><b id="stat-balance">1 000</b></div><div><small>ПРЕДМЕТОВ</small><b id="stat-items">0</b></div></div>
-        <p class="fine-print">Профиль пока демонстрационный. После подключения сервера данные будут храниться в базе.</p>
-      </section>
-    </main>
+    <main id="screen" class="screen"></main>
 
     <nav class="bottom-nav">
-      <button class="nav-btn active" data-page="home"><span>⌂</span><small>Главная</small></button>
-      <button class="nav-btn" data-page="collection"><span>▤</span><small>Коллекция</small></button>
-      <button class="nav-btn" data-page="tasks"><span>✧</span><small>Задания</small></button>
-      <button class="nav-btn" data-page="shop"><span>◇</span><small>Магазин</small></button>
-      <button class="nav-btn" data-page="profile"><span>◉</span><small>Профиль</small></button>
+      <button data-tab="home" class="active"><i>⌂</i><span>Главная</span></button>
+      <button data-tab="garage"><i>▤</i><span>Гараж</span></button>
+      <button data-tab="rating"><i>♛</i><span>Рейтинг</span></button>
+      <button data-tab="tasks"><i>✓</i><span>Задания</span></button>
+      <button data-tab="friends"><i>♧</i><span>Друзья</span></button>
     </nav>
-    <div class="toast" id="toast" role="status"></div>
   </div>
+  <div id="toast" class="toast"></div>
   <script src="app.js"></script>
 </body>
 </html>
