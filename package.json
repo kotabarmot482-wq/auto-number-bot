@@ -1,8 +1,18 @@
 {
-  "name": "auto-number-bot",
-  "version": "2.0.0",
-  "description": "AUTO NUMBER BOT Telegram Mini App",
-  "main": "server/index.js",
-  "scripts": { "start": "node server/index.js" },
-  "dependencies": { "express": "^4.21.2" }
+  "name": "belarus-number-rush",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Telegram Mini App — виртуальный симулятор белорусских номерных знаков",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "telegraf": "^4.16.3"
+  }
 }
