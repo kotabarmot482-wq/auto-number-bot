@@ -3,28 +3,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#101116">
-  <title>AUTO NUMBER BOT</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="theme-color" content="#090a10">
+  <title>BELARUS NUMBER RUSH</title>
+  <link rel="stylesheet" href="/style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-  <div class="app-shell">
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <main class="app-shell">
     <header class="topbar">
-      <div class="brand-mark">AN</div>
-      <div class="brand-copy"><b>AUTO NUMBER</b><span>COLLECTOR CLUB</span></div>
-      <div class="balance-pill"><span>₽</span><b id="balance">1 000</b></div>
+      <div class="brand-mark">BNR</div>
+      <div class="brand-copy"><span class="eyebrow">VIRTUAL GARAGE</span><h1>BELARUS <b>NUMBER RUSH</b></h1></div>
+      <div class="online"><i></i> ONLINE</div>
     </header>
-    <main id="screen" class="screen"></main>
-    <nav class="nav">
-      <button class="nav-btn active" data-tab="home"><span>🎰</span>Крутить</button>
-      <button class="nav-btn" data-tab="garage"><span>🚘</span>Гараж</button>
-      <button class="nav-btn" data-tab="wheel"><span>🎡</span>Колесо</button>
-      <button class="nav-btn" data-tab="frames"><span>🖼️</span>Рамки</button>
-      <button class="nav-btn" data-tab="profile"><span>👤</span>Профиль</button>
+
+    <section class="balance-card">
+      <div><span class="eyebrow">ТВОЙ ИГРОВОЙ БАЛАНС</span><div class="balance" id="balance">10 000 000 ₽</div></div>
+      <div class="coin">₽</div>
+    </section>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="game">🎰 Прокрутка</button>
+      <button class="tab" data-tab="collection">🏆 Коллекция <span id="collection-count">0</span></button>
+      <button class="tab" data-tab="history">📜 История</button>
     </nav>
-  </div>
-  <div id="toast" class="toast"></div>
-  <script src="app.js"></script>
+
+    <section id="game-view" class="view">
+      <div class="section-heading"><span class="eyebrow">LUCKY PLATE GENERATOR</span><h2>Испытай удачу</h2><p>Выбери категорию прокрутки и получи уникальный номер.</p></div>
+      <div class="machine">
+        <div class="machine-top"><span>★ PREMIUM SLOT ★</span><span class="machine-light">● ● ●</span></div>
+        <div class="slot-window">
+          <div class="noise" id="noise"></div>
+          <div class="plate-wrap" id="plate-wrap">
+            <div class="plate" id="plate">
+              <div class="flag"><span></span><span></span><small>BY</small></div>
+              <div class="plate-number" id="plate-number">1234 АВС-7</div>
+              <div class="plate-country">BY</div>
+            </div>
+          </div>
+        </div>
+        <div class="machine-bottom"><span>GOOD LUCK</span><span id="machine-status">ГОТОВ К ИГРЕ</span></div>
+      </div>
+      <div class="result hidden" id="result">
+        <div class="sparkles" id="sparkles"></div>
+        <span class="eyebrow">ТВОЙ ВЫПАВШИЙ НОМЕР</span>
+        <h3 id="result-rarity">ОБЫЧНЫЙ</h3>
+        <div class="result-plate" id="result-plate"></div>
+        <div class="result-value"><span>Цена продажи</span><b id="result-value">—</b></div>
+        <button class="primary-button" id="save-button">✓ ОСТАВИТЬ В КОЛЛЕКЦИИ</button>
+        <p class="small-note">Номер уже сохранён в коллекции. Его можно продать там.</p>
+      </div>
+      <div class="section-heading tier-heading"><span class="eyebrow">CHOOSE YOUR SPIN</span><h2>Выбери прокрутку</h2></div>
+      <div class="tiers" id="tiers">
+        <button class="tier common" data-rarity="common"><span>ОБЫЧНЫЙ</span><b>2 000 ₽</b><small>Стартовая категория</small></button>
+        <button class="tier rare" data-rarity="rare"><span>РЕДКИЙ</span><b>9 000 ₽</b><small>Парные символы</small></button>
+        <button class="tier epic" data-rarity="epic"><span>ЭПИЧЕСКИЙ</span><b>40 000 ₽</b><small>Особая комбинация</small></button>
+        <button class="tier mythic" data-rarity="mythic"><span>МИФИЧЕСКИЙ</span><b>180 000 ₽</b><small>Очень редкий знак</small></button>
+        <button class="tier legendary" data-rarity="legendary"><span>ЛЕГЕНДАРНЫЙ</span><b>500 000 ₽</b><small>Топовая комбинация</small></button>
+      </div>
+      <p class="disclaimer">Все значения — виртуальная игровая валюта. Покупка валюты, денежные ставки и вывод денег не предусмотрены.</p>
+    </section>
+
+    <section id="collection-view" class="view hidden">
+      <div class="section-heading"><span class="eyebrow">YOUR GARAGE</span><h2>Моя коллекция</h2><p>Собранные номерные знаки и их игровая стоимость.</p></div>
+      <div id="collection-list" class="cards-list"></div>
+    </section>
+
+    <section id="history-view" class="view hidden">
+      <div class="section-heading"><span class="eyebrow">LAST ACTIVITY</span><h2>История выпадений</h2><p>Последние 20 полученных номеров.</p></div>
+      <div id="history-list" class="cards-list"></div>
+    </section>
+    <footer>BNR • VIRTUAL COLLECTION GAME • BELARUS</footer>
+  </main>
+  <div class="toast" id="toast"></div>
+  <script src="/game.js"></script>
 </body>
 </html>
